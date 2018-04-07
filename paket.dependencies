@@ -1,7 +1,8 @@
 
 group Build
-    frameworks: net45, netstandard2.0
     source https://nuget.org/api/v2
+    framework: netstandard2.0
+    storage: none
 
     nuget FAKE
     nuget FSharp.Formatting
@@ -11,6 +12,10 @@ group Build
     nuget FSharp.Core
     nuget SharpYaml
     nuget NetStandard.Library.NetFramework
+    nuget System.Configuration.ConfigurationManager
+    nuget Microsoft.Web.Administration
+    nuget Microsoft.Extensions.Caching.Memory
+    nuget System.Resources.ResourceManager
 
     github fsharp/FAKE modules/Octokit/Octokit.fsx
     github fsprojects/FSharp.TypeProviders.SDK src/ProvidedTypes.fsi
@@ -18,11 +23,8 @@ group Build
     github fsprojects/FSharp.TypeProviders.SDK src/ProvidedTypesTesting.fs
 
 group Test
-    frameworks: net461
     source https://nuget.org/api/v2
+    framework: netcoreapp2.0
+    storage: none
 
-    nuget FSharp.Core redirects: force
     nuget Expecto
-    nuget SharpYaml
-
-    github fsprojects/FSharp.TypeProviders.SDK fsc.props

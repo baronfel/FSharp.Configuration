@@ -1,3 +1,7 @@
 group Build
   SharpYaml
   FSharp.Core
+  System.Configuration.ConfigurationManager
+  Microsoft.Web.Administration
+  Microsoft.Extensions.Caching.Memory
+  System.Resources.ResourceManager

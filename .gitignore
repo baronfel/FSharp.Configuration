@@ -180,5 +180,4 @@ build_PRIVATE.cmd
 .fake/build.fsx_*
 docs/tools/.fake/generate.fsx_*
 /.idea
-/.paket/paket.exe
-/.paket/Paket.Restore.targets
+.paket/load

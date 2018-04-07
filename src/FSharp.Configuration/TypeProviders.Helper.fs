@@ -199,7 +199,6 @@ let findConfigFile resolutionFolder configFileName =
         Array.append [|resolutionFolder|] path |> Path.Combine
 
 // Get the assembly and namespace used to house the provided types
-let thisAssembly = System.Reflection.Assembly.GetExecutingAssembly()
 let rootNamespace = "FSharp.Configuration"
 
 module File =

@@ -66,10 +66,8 @@ module Parser =
         | e -> Choice2Of2 e
 
 open ProviderImplementation.ProvidedTypes
-open System.Collections.Generic
-open System
 open System.Globalization
-//open System.Runtime.Caching
+open Microsoft.Extensions.Caching.Memory
 
 let getValue (iniFileName: string) (section: string) (key: string) = 
     match Parser.parse (Path.GetFileName iniFileName) with
@@ -81,18 +79,18 @@ let getValue (iniFileName: string) (section: string) (key: string) =
         }
     | Choice2Of2 _ -> None
 
-let internal typedIniFile (context: Context) =
-    let iniFile = ProvidedTypeDefinition(thisAssembly, rootNamespace, "IniFile", Some typeof<obj>, true)
-    //let cache = new MemoryCache(name = "IniFileProvider")
-    //context.AddDisposable cache
+let internal typedIniFile (context: Context) assy =
+    let iniFile = ProvidedTypeDefinition(assy, rootNamespace, "IniFile", Some typeof<obj>, true)
+    let cache = new MemoryCache(new MemoryCacheOptions())
+    context.AddDisposable cache
     
     iniFile.DefineStaticParameters(
         parameters = [ ProvidedStaticParameter ("configFileName", typeof<string>) ],
         instantiationFunction = (fun typeName parameterValues ->
-            //let value = lazy (
+            let value = lazy (
                 match parameterValues with 
                 | [| :? string as iniFileName |] ->
-                    let typeDef = ProvidedTypeDefinition(thisAssembly, rootNamespace, typeName, Some typeof<obj>, true)
+                    let typeDef = ProvidedTypeDefinition(assy, rootNamespace, typeName, Some typeof<obj>, true)
                     let niceName = createNiceNameProvider()
                     try
                         let filePath = findConfigFile context.ResolutionFolder iniFileName
@@ -147,6 +145,7 @@ let internal typedIniFile (context: Context) =
                         typeDef
                     with _ -> typeDef
                 | x -> failwithf "unexpected parameter values %A" x)
-            //cache.GetOrAdd (typeName, value)))
-            )
+            cache.GetOrCreate (typeName, fun _ -> value.Force())
+        )
+    )
     iniFile
